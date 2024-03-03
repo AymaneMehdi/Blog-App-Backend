@@ -13,11 +13,11 @@ exports.login = async (req, res) => {
   if (user.password != password) {
     res.status(401).json({ message: "Password incorrect" });
   }
-  const token = generateToken(email);
+  const token = generateToken(user.email, user._id, user.role);
   res.status(200).json(token);
 };
 ///////////////////////////////////////////
-const generateToken = (email) => {
-  const token = jwt.sign({ email: email }, process.env.secretcode , { expiresIn: "2h" });
+const generateToken = (email, _id, role) => {
+  const token = jwt.sign({ email, _id, role }, process.env.secretcode , { expiresIn: "2h" });
   return token;
 };

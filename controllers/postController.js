@@ -1,5 +1,5 @@
 const Post = require('../models/post');
-
+const jwt = require('jsonwebtoken');
 ///////////////////////////////////////////
 exports.getAll = async (req, res) => {
   try {
@@ -18,10 +18,14 @@ exports.getOne = async (req, res) => {
   }};
 ///////////////////////////////////////////
 exports.createPost = async (req, res) => {
-  try {
+  try {  
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, process.env.secretcode);
+  const author = decodedToken._id;
     const post = new Post({
       title: req.body.title,
       text: req.body.text,
+      author: author,
     });
     await post.save();
     res.status(201).json({ message: 'Post saved successfully!' });
@@ -31,20 +35,27 @@ exports.createPost = async (req, res) => {
 ///////////////////////////////////////////
 exports.updatePost = async (req, res) => {
   try {
-    const post = new Post({
-      _id: req.params.id,
-      title: req.body.title,
-      text: req.body.text,
-    });
-    await Post.updateOne({_id: req.params.id}, post);
-    res.status(201).json({ message: 'Post updated successfully!' });
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, process.env.secretcode);
+    const author = decodedToken._id;
+    const post = await Post.findOne({ _id: req.params.id, author: author });
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    post.title = req.body.title;
+    post.text = req.body.text;
+    await post.save();
+    res.status(200).json({ message: 'Post updated successfully!' });
   } catch (error) {
-    res.status(400).json({ message: 'Post not found' });
+    res.status(400).json({ message: 'Error updating post' });
   }};
 ///////////////////////////////////////////
 exports.deletePost = async (req, res) => {
   try{
-  await Post.deleteOne({_id: req.params.id});
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, process.env.secretcode);
+  const author = decodedToken._id;
+  await Post.deleteOne({_id: req.params.id, author: author});
   res.status(201).json({ message: 'Post deleted successfully!' });
   }
   catch (error) {
