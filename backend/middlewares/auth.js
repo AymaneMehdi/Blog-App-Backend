@@ -1,19 +1,29 @@
 const jwt = require('jsonwebtoken');
+
 const auth = (req, res, next) => {
   const authHeader = req.headers["authorization"];
+  
+  // Check if Authorization header exists
   if (!authHeader) {
-    res.status(401).json("you are not authorized");
+    return res.status(401).json("Authorization header is missing");
   }
+  
   const token = authHeader.split(" ")[1];
+  
+  // Check if token exists
   if (!token) {
-    res.json("token not exist");
+    return res.status(401).json("Token is missing");
   }
+  
   jwt.verify(token, "secretcode" , (error, user) => {
     if (error) {
-      res.status(401).json("you are not authorized");
+      return res.status(401).json("Invalid token or unauthorized");
     }
+    // Attach user object to request for further processing
     req.user = user;
+    // Call next middleware
+    next();
   });
-  next();
 };
+
 module.exports = auth;

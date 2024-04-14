@@ -23,6 +23,7 @@ exports.createPost = async (req, res) => {
   const decodedToken = jwt.verify(token, "secretcode");
   const author = decodedToken._id;
     const post = new Post({
+      image: req.body.image,
       title: req.body.title,
       text: req.body.text,
       author: author,
@@ -42,6 +43,7 @@ exports.updatePost = async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
+    post.image = req.body.image,
     post.title = req.body.title;
     post.text = req.body.text;
     await post.save();

@@ -66,7 +66,7 @@
           <div className="flex items-center justify-center min-h-screen bg-cover bg-center backdrop-filter backdrop-blur-sm bg-opacity-20 w-full h-full">
           <form onSubmit={handleSubmit}>
           <div
-            class="relative flex flex-col m-6 space-y-8 bg-white shadow-2xl rounded-2xl md:flex-row md:space-y-0 mt-32"
+            class="relative flex flex-col m-6 space-y-8 bg-white shadow-2xl rounded-2xl md:flex-row md:space-y-0 mt-20"
           >
             <div class="flex flex-col justify-center p-8 md:p-11 ">
               <span class="mb-3 text-4xl font-bold text-violet-600">LOGIN</span>
